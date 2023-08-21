@@ -9,31 +9,31 @@ function handleDeleteUser() {
 }
 </script>
 <template>
-  <div class="flex items-start text-normal-text-color flex-col mb-[0rem]">
-    <span class="flex justify-between relative w-full">
+  <div class="mb-[0rem] flex flex-col items-start text-normal-text-color">
+    <span class="relative flex w-full justify-between">
       <div class="flex items-start">
         <img
-          class="w-[2rem] h-[2rem] rounded-[2rem] bg-gray-300"
-          :src="comment.user.avatar"
+          class="h-[2rem] w-[2rem] rounded-[2rem] bg-gray-300"
+          :src="comment.user.photo"
           alt=""
         />
-        <span class="block ml-[0.5rem] leading-none">
+        <span class="ml-[0.5rem] block leading-none">
           {{ comment.user.name }} &nbsp • &nbsp
-          {{ comment.createAt }}
+          {{ comment.createdAt }}
         </span>
       </div>
       <button
-        class="editbox-openbtn z-[20] hover:bg-normal-btn-hover focus:bg-normal-btn-hover w-[2rem] h-[2rem] rounded-[1rem] active:bg-normal-btn-active"
+        class="editbox-openbtn z-[20] h-[2rem] w-[2rem] rounded-[1rem] hover:bg-normal-btn-hover focus:bg-normal-btn-hover active:bg-normal-btn-active"
         v-if="userStore.isAdmin"
       >
         <i class="pi pi-ellipsis-v"></i>
       </button>
       <div
         v-if="userStore.isAdmin"
-        class="absolute w-[10rem] py-[0.5rem] shadow-md z-30 right-0 bg-gray-50 top-[calc(100%+0.5rem)] editbox"
+        class="editbox absolute right-0 top-[calc(100%+0.5rem)] z-30 w-[10rem] bg-gray-50 py-[0.5rem] shadow-md"
       >
         <button
-          class="text-[1rem] block w-full text-error-color text-left py-[0.5rem] px-[1rem] hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover disabled:text-green-btn-text-color"
+          class="block w-full px-[1rem] py-[0.5rem] text-left text-[1rem] text-error-color hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover disabled:text-green-btn-text-color"
           @click="handleDeleteUser"
         >
           Xóa tài khoản
@@ -41,19 +41,19 @@ function handleDeleteUser() {
       </div>
     </span>
 
-    <span class="w-full ml-[2.5rem] mb-[0.5rem] pr-[2.5rem]">
+    <span class="mb-[0.5rem] ml-[2.5rem] w-full pr-[2.5rem]">
       {{ comment.content }}
     </span>
-    <span class="flex ml-[2.5rem] justify-end w-full pr-[2.5rem]">
+    <span class="ml-[2.5rem] flex w-full justify-end pr-[2.5rem]">
       <button
-        class="z-20 py-[0.5rem] leading-none px-[1rem] w-fit rounded-[1rem] flex items-center text-normal-text-color text-[1rem] hover:bg-normal-btn-hover active:bg-normal-btn-active"
+        class="z-20 flex w-fit items-center rounded-[1rem] px-[1rem] py-[0.5rem] text-[1rem] leading-none text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active"
         @click=""
       >
         <i class="pi pi-exclamation-triangle mr-[0.25rem]"></i>
         <span>Báo cáo</span>
       </button>
       <button
-        class="ml-[0.5rem] z-20 py-[0.5rem] leading-none px-[1rem] w-fit rounded-[1rem] border-[1px] border-error-color flex items-center text-error-color text-[1rem] hover:bg-red-200 active:bg-red-300"
+        class="z-20 ml-[0.5rem] flex w-fit items-center rounded-[1rem] border-[1px] border-error-color px-[1rem] py-[0.5rem] text-[1rem] leading-none text-error-color hover:bg-red-200 active:bg-red-300"
         @click=""
         v-if="userStore.isAdmin"
       >

@@ -8,6 +8,7 @@ import { storeToRefs } from "pinia";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useLSidebarStore } from "../stores/lSidebar";
 import { useArticleStore } from "../stores/article";
+import { useTagStore } from "../stores/tag";
 
 onMounted(() => {
   ClassicEditor.create(document.querySelector("#editor"), {
@@ -32,6 +33,8 @@ onMounted(() => {
 
 const lSidebarStore = useLSidebarStore();
 const articleStore = useArticleStore();
+const tagStore = useTagStore();
+
 const articleTitle = ref();
 
 const overlayVisible = ref(false);
@@ -58,14 +61,14 @@ const articleRules = computed(() => {
 });
 const $v1 = useVuelidate(articleRules, { articleTitle, tags });
 
-lSidebarStore.initUploadview();
-lSidebarStore.fetchTags();
+lSidebarStore.initAdminView();
+tagStore.fetchTags();
 
 async function handleUpload() {
   const isValid = await $v1.value.$validate();
   if (isValid) {
     const contentSize = document.getElementsByClassName(
-      "ck-editor__editable"
+      "ck-editor__editable",
     )[0].offsetHeight;
     const articleData = {
       title: articleTitle.value,
@@ -106,7 +109,7 @@ async function handleInitTag() {
     const randomBoolean = Math.random() < 0.5;
     if (randomBoolean) {
       tags.value.push(tagInputValue.value);
-      existedTags.value.push({ label: tagInputValue.value });
+      existedTags.value.push({ name: tagInputValue.value });
       toast.success("Tạo thể loại mới thành công", { autoClose: 2000 });
     } else {
       toast.error("Tạo thể loại mới thất bại", { autoClose: 2000 });
@@ -134,36 +137,36 @@ async function handleSetPadding() {
   tagInputRef.value.style.setProperty(
     "padding-left",
     `${paddingSize}px`,
-    "important"
+    "important",
   );
 }
 </script>
 
 <template>
   <div
-    class="fixed w-[100vw] h-[100vh] top-0 left-0 bg-overlay-color z-[50] flex"
+    class="fixed left-0 top-0 z-[50] flex h-[100vh] w-[100vw] bg-overlay-color"
     v-if="overlayVisible"
   >
-    <span class="block m-auto">
+    <span class="m-auto block">
       <i class="pi pi-spin pi-spinner text-[4rem]"></i>
     </span>
   </div>
   <div class="w-full p-[1rem] pr-[2rem]">
     <div class="w-auto">
       <span
-        class="text-title-text-color text-[1.2rem] font-semibold mb-[0.25rem] block leading-none"
+        class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color"
         >Tiêu đề</span
       >
       <input
         v-model="articleTitle"
         type="text"
-        class="w-full text-title-text-color text-[1rem] py-[0.75rem] pl-[1rem] border-border-color border-[2px] rounded-[0.5rem] outline-normal-btn-active"
+        class="w-full rounded-[0.5rem] border-[2px] border-border-color py-[0.75rem] pl-[1rem] text-[1rem] text-title-text-color outline-normal-btn-active"
         :class="{ 'border-error-color': $v1.articleTitle.$error }"
       />
     </div>
-    <div class="w-auto my-[0.5rem] relative">
+    <div class="relative my-[0.5rem] w-auto">
       <span
-        class="text-title-text-color text-[1.2rem] font-semibold mb-[0.25rem] block leading-none"
+        class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color"
         >Thể loại</span
       >
       <input
@@ -171,40 +174,40 @@ async function handleSetPadding() {
         v-model="tagInputValue"
         type="text"
         @keypress.enter="handleAddTag()"
-        class="tag-input w-full text-title-text-color text-[1rem] py-[0.75rem] pl-[1rem] border-border-color border-[2px] rounded-[0.5rem] outline-normal-btn-active"
+        class="tag-input w-full rounded-[0.5rem] border-[2px] border-border-color py-[0.75rem] pl-[1rem] text-[1rem] text-title-text-color outline-normal-btn-active"
         @click="(event) => event.target.focus()"
         :class="{ 'border-error-color outline-error-color': $v1.tags.$error }"
       />
 
       <div
-        class="absolute bg-green-50 shadow-md w-full max-h-[15rem] overflow-y-auto z-[10] tag-box"
+        class="tag-box absolute z-[10] max-h-[15rem] w-full overflow-y-auto bg-green-50 shadow-md"
       >
         <ul>
           <li v-for="tag in existedTags">
             <button
-              class="text-[1rem] text-normal-text-color block w-full text-left py-[0.5rem] px-[1rem] hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover"
-              @click="handleAddTag(tag.label)"
+              class="block w-full px-[1rem] py-[0.5rem] text-left text-[1rem] text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover"
+              @click="handleAddTag(tag.name)"
               v-if="
-                tag.label.includes(tagInputValue) && !tags.includes(tag.label)
+                tag.name.includes(tagInputValue) && !tags.includes(tag.name)
               "
             >
-              {{ tag.label }}
+              {{ tag.name }}
             </button>
           </li>
         </ul>
       </div>
       <div class="relative w-full">
-        <div class="absolute flex bottom-[0.5rem] pl-[0.5rem]" ref="tagsRef">
+        <div class="absolute bottom-[0.5rem] flex pl-[0.5rem]" ref="tagsRef">
           <template v-for="tag in tags">
             <span
-              class="bg-green-100 pl-[1rem] mx-[0.25rem] text-ntext rounded-[1rem] flex items-center"
+              class="text-ntext mx-[0.25rem] flex items-center rounded-[1rem] bg-green-100 pl-[1rem]"
             >
               <span>
                 {{ tag }}
               </span>
               <button
                 @click="handleRemoveTag(tag)"
-                class="ml-[0.25rem] flex hover:bg-red-500 text-ntext p-[0.5rem] rounded-[1rem]"
+                class="text-ntext ml-[0.25rem] flex rounded-[1rem] p-[0.5rem] hover:bg-red-500"
               >
                 <i class="pi pi-icons pi-times-circle my-auto"></i>
               </button>
@@ -215,14 +218,14 @@ async function handleSetPadding() {
     </div>
     <div class="w-auto">
       <span
-        class="text-title-text-color text-[1.2rem] font-semibold mb-[0.25rem] block leading-none"
+        class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color"
         >Nội dung</span
       >
       <div id="editor"></div>
     </div>
 
     <button
-      class="mt-[0.5rem] text-normal-text-color text-[1.2rem] font-semibold bg-normal-btn-bg active:bg-normal-btn-active hover:bg-normal-btn-hover w-full py-[0.5rem] rounded-[0.5rem]"
+      class="mt-[0.5rem] w-full rounded-[0.5rem] bg-normal-btn-bg py-[0.5rem] text-[1.2rem] font-semibold text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active"
       @click="handleUpload"
     >
       Tải lên

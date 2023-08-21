@@ -9,7 +9,7 @@ const { comment } = defineProps(["comment"]);
 const userStore = useUserStore();
 const commentStore = useCommentStore();
 
-const replies = ref();
+const replyValue = ref("");
 
 const showReplies = ref(false);
 
@@ -19,99 +19,81 @@ function handleDeleteUser() {
 
 function handleViewReplies() {
   console.log("View repies: ");
-  commentStore.fetchReplies(comment.id);
   showReplies.value = !showReplies.value;
 }
+
+function handleReply() {
+  commentStore.postComment(userStore.info.id, replyValue.value, comment.post, comment.id);
+}
+
 </script>
 <template>
-  <div class="flex items-start text-normal-text-color flex-col mb-[1rem]">
-    <span class="flex justify-between relative w-full">
+  <div class="mb-[1rem] flex flex-col items-start text-normal-text-color">
+    <span class="relative flex w-full justify-between">
       <div class="flex items-start">
-        <img
-          class="w-[2rem] h-[2rem] rounded-[2rem] bg-gray-300"
-          :src="comment.user.avatar"
-          alt=""
-        />
-        <span class="block ml-[0.5rem] leading-none">
+        <img class="h-[2rem] w-[2rem] rounded-[2rem] bg-gray-300" :src="comment.user.photo" alt="" />
+        <span class="ml-[0.5rem] block leading-none">
           {{ comment.user.name }} &nbsp • &nbsp
           {{ comment.createAt }}
         </span>
       </div>
       <button
-        class="editbox-openbtn z-[20] hover:bg-normal-btn-hover focus:bg-normal-btn-hover w-[2rem] h-[2rem] rounded-[1rem] active:bg-normal-btn-active"
-        v-if="userStore.isAdmin"
-      >
+        class="editbox-openbtn z-[20] h-[2rem] w-[2rem] rounded-[1rem] hover:bg-normal-btn-hover focus:bg-normal-btn-hover active:bg-normal-btn-active"
+        v-if="userStore.isAdmin">
         <i class="pi pi-ellipsis-v"></i>
       </button>
-      <div
-        v-if="userStore.isAdmin"
-        class="absolute w-[10rem] py-[0.5rem] shadow-md z-30 right-0 bg-gray-50 top-[calc(100%+0.5rem)] editbox"
-      >
+      <div v-if="userStore.isAdmin"
+        class="editbox absolute right-0 top-[calc(100%+0.5rem)] z-30 w-[10rem] bg-gray-50 py-[0.5rem] shadow-md">
         <button
-          class="text-[1rem] block w-full text-error-color text-left py-[0.5rem] px-[1rem] hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover disabled:text-green-btn-text-color"
-          @click="handleDeleteUser"
-        >
+          class="block w-full px-[1rem] py-[0.5rem] text-left text-[1rem] text-error-color hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover disabled:text-green-btn-text-color"
+          @click="handleDeleteUser">
           Xóa tài khoản
         </button>
       </div>
     </span>
 
-    <span class="w-full ml-[2.5rem] mb-[0.5rem] pr-[2.5rem]">
+    <span class="mb-[0.5rem] ml-[2.5rem] w-full pr-[2.5rem]">
       {{ comment.content }}
     </span>
-    <span
-      class="flex ml-[2.5rem] w-full pr-[3.5rem]"
-      :class="{
-        'justify-end': comment.countReply == 0,
-        'justify-between': comment.countReply > 0,
-      }"
-    >
-      <button
-        class="text-blue-500"
-        @click="handleViewReplies"
-        v-if="comment.countReply > 0"
-      >
-        {{ showReplies ? "Ẩn phản hồi" : `Xem ${comment.countReply} phản hồi` }}
+    <span class="ml-[2.5rem] flex w-full pr-[3.5rem]" :class="{
+      'justify-end': comment.comments.length == 0,
+      'justify-between': comment.comments.length > 0,
+    }">
+      <button class="text-blue-500" @click="handleViewReplies" v-if="comment.comments.length > 0">
+        {{
+          showReplies
+          ? "Ẩn phản hồi"
+          : `Xem ${comment.comments.length} phản hồi`
+        }}
       </button>
       <span class="flex">
         <button
-          class="z-20 py-[0.5rem] leading-none px-[1rem] w-fit rounded-[1rem] flex items-center text-normal-text-color text-[1rem] hover:bg-normal-btn-hover active:bg-normal-btn-active"
-          @click=""
-        >
+          class="z-20 flex w-fit items-center rounded-[1rem] px-[1rem] py-[0.5rem] text-[1rem] leading-none text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active"
+          @click="">
           <i class="pi pi-exclamation-triangle mr-[0.25rem]"></i>
           <span>Báo cáo</span>
         </button>
         <button
-          class="ml-[0.5rem] z-20 py-[0.5rem] leading-none px-[1rem] w-fit rounded-[1rem] flex items-center text-normal-text-color text-[1rem] hover:bg-normal-btn-hover active:bg-normal-btn-active"
-          @click=""
-        >
+          class="z-20 ml-[0.5rem] flex w-fit items-center rounded-[1rem] px-[1rem] py-[0.5rem] text-[1rem] leading-none text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active"
+          @click="">
           <i class="pi pi-comment mr-[0.25rem]"></i>
           <span>Phản hồi</span>
         </button>
         <button
-          class="ml-[0.5rem] z-20 py-[0.5rem] leading-none px-[1rem] w-fit rounded-[1rem] border-[1px] border-error-color flex items-center text-error-color text-[1rem] hover:bg-red-200 active:bg-red-300"
-          @click=""
-          v-if="userStore.isAdmin"
-        >
+          class="z-20 ml-[0.5rem] flex w-fit items-center rounded-[1rem] border-[1px] border-error-color px-[1rem] py-[0.5rem] text-[1rem] leading-none text-error-color hover:bg-red-200 active:bg-red-300"
+          @click="" v-if="userStore.isAdmin">
           <i class="pi pi-trash mr-[0.25rem]"></i>
           <span>Xóa</span>
         </button>
       </span>
     </span>
     <div class="ml-[2.5rem] mt-[0.5rem] w-full pr-[2.5rem]" v-if="showReplies">
-      <sub-comment
-        :comment="reply"
-        v-for="reply in comment.replies"
-      ></sub-comment>
+      <sub-comment :comment="reply" v-for="reply in comment.comments"></sub-comment>
       <span class="relative block">
-        <textarea
-          class="text-normal-text-color text-[1rem] resize-none rounded-[1rem] w-full border-border-color border-[2px] outline-normal-btn-active py-[0.25rem] px-[1rem]"
-          placeholder="Phản hồi..."
-          rows="2"
-        ></textarea>
-        <button
-          class="absolute right-[1rem] top-[50%] text-green-btn-text-color translate-y-[-50%]"
-        >
+        <textarea v-model="replyValue"
+          class="w-full resize-none rounded-[1rem] border-[2px] border-border-color px-[1rem] py-[0.25rem] text-[1rem] text-normal-text-color outline-normal-btn-active"
+          placeholder="Phản hồi..." rows="2"></textarea>
+        <button class="absolute right-[1rem] top-[50%] translate-y-[-50%] text-green-btn-text-color" @click="handleReply">
           <i class="pi pi-send text-[1.5rem]"></i>
         </button>
       </span>
@@ -120,9 +102,10 @@ function handleViewReplies() {
 </template>
 
 <style scoped>
-.editbox-openbtn:focus + .editbox {
+.editbox-openbtn:focus+.editbox {
   display: block;
 }
+
 .editbox {
   display: none;
 }

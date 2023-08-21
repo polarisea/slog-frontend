@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import baseAxios from "../services/axios";
 
 export const useLSidebarStore = defineStore("lSidebar", {
   state: () => {
@@ -10,106 +11,7 @@ export const useLSidebarStore = defineStore("lSidebar", {
     };
   },
   actions: {
-    fetchTags() {
-      if (this.tags.length == 0) {
-        setTimeout(() => {
-          this.tags = [
-            {
-              label: "Chưa cập nhật 1",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 2",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 3",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 4",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 5",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 6",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 7",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 8",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 9",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 10",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 11",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 12",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật 13",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-            {
-              label: "Chưa cập nhật",
-              type: "route",
-              icon: "pi-hashtag",
-              route: "/",
-            },
-          ];
-        }, 2000);
-      }
-    },
-    initHomeview() {
-      this.fetchTags();
+    initUserView() {
       this.items = [
         { label: "Trang chủ", type: "route", icon: "pi-home", route: "/" },
         {
@@ -132,7 +34,8 @@ export const useLSidebarStore = defineStore("lSidebar", {
         },
       ];
     },
-    initUploadview() {
+
+    initAdminView() {
       this.items = [
         { label: "Trang chủ", type: "route", icon: "pi-home", route: "/" },
         {

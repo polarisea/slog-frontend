@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
+// import {useBaseStore} from "../stores/base"
+// const baseStore = useBaseStore();
+
 import HomeView from "../views/HomeView.vue";
 
 const router = createRouter({
@@ -35,4 +38,10 @@ const router = createRouter({
   ],
 });
 
+// router.beforeEach((to, from, next) => {
+//     baseStore.overlayVisible = true;
+//     next();
+// //   if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
+// //   else next()
+// })
 export default router;

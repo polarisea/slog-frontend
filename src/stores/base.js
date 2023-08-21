@@ -1,21 +1,21 @@
 import { defineStore } from "pinia";
+import baseAxios from "../services/axios";
 
 export const useBaseStore = defineStore("base", {
   state: () => {
     return {
-      author: {},
-      isLogin: true,
+      author: null,
+      isLogin: false,
+      overlayVisible: false,
     };
   },
   actions: {
     fetchAuthor() {
-      this.author = {
-        name: "No name",
-        avatar:
-          "https://styles.redditmedia.com/t5_3eb8a/styles/communityIcon_y3i1684w1sd91.png",
-        email: "No email",
-        description: "This author has no description now",
-      };
+      baseAxios.get("/api/author").then(res => {
+        this.author = res.data
+      }).catch(err => {
+        console.log("Fetch author failed")
+      })
     },
   },
 });

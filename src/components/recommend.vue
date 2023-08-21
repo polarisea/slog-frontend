@@ -19,15 +19,15 @@ const shortTitle = computed(() => {
 </script>
 <template>
   <div class="w-full">
-    <div class="flex justify-between text-ntext flex-col">
-      <span class="flex items-center w-full">
+    <div class="text-ntext flex flex-col justify-between">
+      <span class="flex w-full items-center">
         <a
           @click.prevent="console.log('click')"
           href="/"
-          class="rounded-[2rem] text-ntext h-[2rem] w-full flex items-center hover:text-green-500 z-[20]"
+          class="text-ntext z-[20] flex h-[2rem] w-full items-center rounded-[2rem] hover:text-green-500"
         >
           <img
-            class="w-[2rem] h-full bg-green-100 rounded-[2rem] mr-[0.5rem]"
+            class="mr-[0.5rem] h-full w-[2rem] rounded-[2rem] bg-green-100"
             :src="baseStore.author.avatar"
             alt=""
           />
@@ -36,13 +36,13 @@ const shortTitle = computed(() => {
       </span>
       <a
         :title="props.recommend.title"
-        class="hover:underline text-ntext block font-[500] my-[0.5rem] text-[1rem] max-lg:hidden"
+        class="text-ntext my-[0.5rem] block text-[1rem] font-[500] hover:underline max-lg:hidden"
         :href="`/article/${props.recommend.id}`"
         >{{ shortTitle }}
       </a>
       <a
         :title="props.recommend.title"
-        class="hover:underline text-ntext block font-[500] my-[0.5rem] text-[1rem] lg:hidden"
+        class="text-ntext my-[0.5rem] block text-[1rem] font-[500] hover:underline lg:hidden"
         :href="`/article/${props.recommend.id}`"
         >{{ props.recommend.title }}
       </a>
