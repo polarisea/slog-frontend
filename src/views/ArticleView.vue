@@ -1,13 +1,17 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength } from "@vuelidate/validators";
 import { formatDistanceToNow } from "date-fns";
+import { toast } from "vue3-toastify";
 
 import { useArticleStore } from "../stores/article";
 import { useLSidebarStore } from "../stores/lSidebar";
 import { useCommentStore } from "../stores/comment";
 import { useUserStore } from "../stores/user";
+import { useTagStore } from "../stores/tag"
 import commentFilter from "../components/commentFilter.vue";
 import comment from "../components/comment.vue";
 import recommend from "../components/recommend.vue";
@@ -17,20 +21,40 @@ const articleStore = useArticleStore();
 const lSidebarStore = useLSidebarStore();
 const commentStore = useCommentStore();
 const userStore = useUserStore();
+const tagStore = useTagStore();
 
 const { article } = storeToRefs(articleStore);
-const { comments } = storeToRefs(commentStore);
+const { comments, isTyping } = storeToRefs(commentStore);
 const showAll = ref(false);
 const isHover = ref(false);
 const commentValue = ref("");
 
-lSidebarStore.initUserView();
+onMounted(() => {
+  window.scrollTo(0, 0);
+
+})
+
+
+const commentRules = computed(() => {
+  return {
+    commentValue: {
+      required,
+      minLength: minLength(1),
+    },
+  };
+});
+const $v1 = useVuelidate(commentRules, { commentValue });
+
+
+if (lSidebarStore.status != "user-view") {
+  lSidebarStore.initUserView();
+  tagStore.fetchTags();
+}
 articleStore.fetchArticle(route.params.id);
 articleStore.fetchRecommends();
 commentStore.firstFetch(route.params.id);
 
 const agoTime = computed(() => {
-  console.log(article.value);
   if (article.value.createdAt) {
     return formatDistanceToNow(new Date(article.value.createdAt), {
       addSuffix: true,
@@ -40,8 +64,17 @@ const agoTime = computed(() => {
 });
 
 
-function handleComment() {
-  commentStore.postComment(userStore.info.id, commentValue.value, route.params.id);
+async function handleComment() {
+  const isValid = await $v1.value.$validate();
+  if (!$v1.value.commentValue.$error) {
+    if (userStore.info) {
+      commentStore.postComment(userStore.info.id, commentValue.value, `/api/posts/${route.params.id}`);
+      commentValue.value = "";
+      $v1.value.$reset()
+    } else {
+      toast.error("Bạn chưa đăng nhập", { autoClose: 2000 })
+    }
+  }
 }
 
 </script>
@@ -62,7 +95,7 @@ function handleComment() {
           </span>
         </div>
         <span class="my-[0.5rem] block text-[1.5rem] font-semibold text-title-text-color">{{ article.title }}</span>
-        <div :innerHTML="article.content" class="overflow-y-hidden" :class="{ 'max-h-[15rem]': !showAll }"></div>
+        <div :innerHTML="article.content" class="overflow-y-hidden text-justify"></div>
         <div class="h-boxshadow relative mt-[-4rem] h-[4rem] w-full px-[1rem]" v-if="article.toHide && showAll == false">
         </div>
         <a @click.prevent="showAll = true" class="mb-[0.5rem] block cursor-pointer text-blue-500"
@@ -92,10 +125,14 @@ function handleComment() {
         <span class="relative block">
           <textarea
             class="w-full resize-none rounded-[1rem]  border-[2px] border-border-color px-[1rem] py-[0.25rem] text-[1rem] text-normal-text-color outline-normal-btn-active"
-            placeholder="Comment..." rows="2" v-model="commentValue"></textarea>
+            :class="{ 'outline-red-500 border-red-500': $v1.commentValue.$error }" placeholder="Comment..." rows="2"
+            v-model="commentValue"></textarea>
           <button class="absolute right-[1rem] top-[50%] translate-y-[-50%] text-green-btn-text-color"
             @click="handleComment">
-            <i class="pi pi-send text-[1.5rem]"></i>
+            <i class="pi text-[1.5rem]" :class="{
+              'pi-spin pi-spinner': isTyping,
+              ' pi-send': !isTyping
+            }"></i>
           </button>
         </span>
         <span class="my-[0.5rem] block h-[1px] w-full bg-line-color"></span>
@@ -104,8 +141,8 @@ function handleComment() {
             <comment :comment="comment"> </comment>
             <span class="my-[0.5rem] block h-[1px] w-full bg-line-color"></span>
           </template>
-          <button class="text-[1rem] text-error-color" @click="commentStore.fetchComments(route.params.id)">
-            <!-- v-if="commentStore.comments.length < article.comments" -->
+          <button class="text-[1rem] text-error-color" @click="commentStore.fetchComments(route.params.id)"
+            v-if="comments.length < article.comments.length">
             Xem thêm
           </button>
         </div>
@@ -113,7 +150,7 @@ function handleComment() {
     </div>
     <div class="sticky top-[4rem] h-[calc(100vh-4rem)] w-[20rem] px-[1rem] pr-[2rem] pt-[2rem] max-lg:w-full">
       <span class="mb-[1rem] block text-[1.2rem] font-semibold">
-        Bài viết liên quan</span>
+        Có thể bạn sẽ thích</span>
       <div class="m-auto w-fit h-fit" v-if="!articleStore.recommends">
         <i class="pi pi-spin pi-spinner text-[2rem]"></i>
       </div>

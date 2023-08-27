@@ -7,15 +7,16 @@ export const useBaseStore = defineStore("base", {
       author: null,
       isLogin: false,
       overlayVisible: false,
+      quote: null
     };
   },
   actions: {
-    fetchAuthor() {
-      baseAxios.get("/api/author").then(res => {
-        this.author = res.data
+    fetchQuote() {
+      baseAxios.get("https://api.quotable.io/quotes/random").then(res => {
+        this.quote = res.data[0]
       }).catch(err => {
-        console.log("Fetch author failed")
+        console.log(err)
       })
-    },
+    }
   },
 });

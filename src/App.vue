@@ -31,7 +31,7 @@ userStore.fetchInfor();
   <my-header></my-header>
   <l-sidebar></l-sidebar>
 
-  <div class="relative left-[20rem] mt-[4rem] w-[calc(100vw-20rem)] max-lg:left-0 max-lg:w-[100vw]">
+  <div class="relative left-[20rem] mt-[4rem] w-[calc(100vw-21rem)] max-lg:left-0 max-lg:w-[100vw]">
     <overlay v-if="overlayVisible"></overlay>
     <RouterView />
   </div>

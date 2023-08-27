@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import baseAxios from "../services/axios";
+import { toast } from "vue3-toastify";
 
 export const useArticleStore = defineStore("article", {
   state: () => {
@@ -21,7 +22,7 @@ export const useArticleStore = defineStore("article", {
     fetchArticles() {
       baseAxios
         .get(
-          `/api/posts?page=${this.page}${this.tag ? "&tags=" + this.tag : ""}`,
+          `/api/posts?page=${this.page}${this.tag ? "&tags=" + this.tag : ""}${this.sortBy == "Hot" ? '&order[score]=desc' : '&order[createdAt]=desc'}`,
         )
         .then((res) => {
           this.articles.splice(this.articles.length, 0, ...res.data);
@@ -55,6 +56,8 @@ export const useArticleStore = defineStore("article", {
           }
         }
         console.log(res);
+      }).catch(err => {
+        toast.error("Vote thất bại.", { autoClose: 2000 })
       });
     },
     fetchVotes(post, single = false) {
@@ -90,33 +93,35 @@ export const useArticleStore = defineStore("article", {
     fetchByTag(tagId) {
       this.tag = tagId;
       this.page = 1;
+      if (this.articles.length == 0) {
+        this.fetchArticles();
+      }
       this.articles = [];
     },
 
     fetchRecommends() {
+      const min = Math.ceil(1);
+      const max = Math.floor(5);
+      const page = Math.floor(Math.random() * (max - min + 1)) + min;
+      baseAxios.get(`/api/posts?page=${page}`).then(res => {
+        console.log(res.data)
+        this.recommends = res.data
+      })
       console.log("Fetch recommends");
 
     },
 
     search(keyword) {
       this.searchResults = null;
-      setTimeout(() => {
 
-        baseAxios.get("/api/search").then(res => {
-          this.searchResults = res.data;
-        }).catch(error => {
-          // this.searchResults = [];
-          this.searchResults = [
-            { name: 'No title', id: 1 },
-            { name: "hahahahahahahaahahah haha", id: 2 },
+      baseAxios.get(`/api/posts?title=${keyword}`).then(res => {
+        this.searchResults = res.data;
+      }).catch(error => {
+        // this.searchResults = [];
+        this.searchResults = [
+        ]
+      });
 
-            { name: "hahahahahahahaahahah haha", id: 2 },
-            { name: "hahahahahahahaahahah haha", id: 2 },
-            { name: "hahahahahahahaahahah haha", id: 2 },
-            { name: "hahahahahahahaahahah haha", id: 2 },
-          ];
-        })
-      }, 2000);
     }
 
 

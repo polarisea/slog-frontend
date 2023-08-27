@@ -3,12 +3,29 @@ import { ref } from "vue";
 import { useLSidebarStore } from "../stores/lSidebar";
 import { useTagStore } from "../stores/tag";
 import { useArticleStore } from "../stores/article";
-
+import { useRouter } from "vue-router";
 const lSidebarStore = useLSidebarStore();
 const articleStore = useArticleStore();
 
 const tagStore = useTagStore();
 const isHover = ref(false);
+const router = useRouter();
+function handleChangeRoute(nextRoute) {
+  if (nextRoute == "/hot") {
+    articleStore.sortBy = "Hot"
+    articleStore.page = 1;
+    articleStore.articles = [];
+    nextRoute = "/"
+  }
+  router.push(nextRoute)
+
+  lSidebarStore.isOpen = false
+}
+function handleChangeTag(id) {
+  articleStore.fetchByTag(id);
+  router.push("/");
+  lSidebarStore.isOpen = false;
+}
 </script>
 
 <template>
@@ -24,7 +41,7 @@ const isHover = ref(false);
     <ul class="pb-[1rem] text-normal-text-color">
       <li v-for="(item, i) in lSidebarStore.items" :key="i">
         <template v-if="item.type == 'route'">
-          <a :href="item.route"
+          <a @click.prevent="handleChangeRoute(item.route)"
             class="text-ntext flex w-full py-[1rem] pl-[2rem] hover:bg-normal-btn-hover active:bg-normal-btn-active">
             <i v-if="item.icon" :class="'pi pi-icons text-[1.5rem] ' + item.icon"></i>
             <span class="ml-[0.5rem]">
@@ -45,7 +62,7 @@ const isHover = ref(false);
             <div class="m-auto my-[3.25rem] block text-center" v-if="tagStore.tags.length == 0">
               <i class="pi pi-spin pi-spinner text-[2rem] text-title-text-color"></i>
             </div>
-            <a v-for="(arrItem, arrIdx) in tagStore.tags" @click.prevent="articleStore.fetchByTag(arrItem.id)"
+            <a v-for="(arrItem, arrIdx) in tagStore.tags" @click.prevent="handleChangeTag(arrItem.id)"
               class="text-ntext flex w-full py-[1rem] pl-[2rem] hover:bg-normal-btn-hover active:bg-normal-btn-active">
               <i class="pi pi-icons pi-hashtag text-[1.5rem]"></i>
               <span class="ml-[0.5rem]">

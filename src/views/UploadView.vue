@@ -61,8 +61,10 @@ const articleRules = computed(() => {
 });
 const $v1 = useVuelidate(articleRules, { articleTitle, tags });
 
-lSidebarStore.initAdminView();
-tagStore.fetchTags();
+if (lSidebarStore.status != "admin-view") {
+  lSidebarStore.initAdminView();
+  tagStore.fetchTags();
+}
 
 async function handleUpload() {
   const isValid = await $v1.value.$validate();
@@ -143,54 +145,31 @@ async function handleSetPadding() {
 </script>
 
 <template>
-  <div
-    class="fixed left-0 top-0 z-[50] flex h-[100vh] w-[100vw] bg-overlay-color"
-    v-if="overlayVisible"
-  >
+  <div class="fixed left-0 top-0 z-[50] flex h-[100vh] w-[100vw] bg-overlay-color" v-if="overlayVisible">
     <span class="m-auto block">
       <i class="pi pi-spin pi-spinner text-[4rem]"></i>
     </span>
   </div>
   <div class="w-full p-[1rem] pr-[2rem]">
     <div class="w-auto">
-      <span
-        class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color"
-        >Tiêu đề</span
-      >
-      <input
-        v-model="articleTitle"
-        type="text"
+      <span class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color">Tiêu đề</span>
+      <input v-model="articleTitle" type="text"
         class="w-full rounded-[0.5rem] border-[2px] border-border-color py-[0.75rem] pl-[1rem] text-[1rem] text-title-text-color outline-normal-btn-active"
-        :class="{ 'border-error-color': $v1.articleTitle.$error }"
-      />
+        :class="{ 'border-error-color': $v1.articleTitle.$error }" />
     </div>
     <div class="relative my-[0.5rem] w-auto">
-      <span
-        class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color"
-        >Thể loại</span
-      >
-      <input
-        ref="tagInputRef"
-        v-model="tagInputValue"
-        type="text"
-        @keypress.enter="handleAddTag()"
+      <span class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color">Thể loại</span>
+      <input ref="tagInputRef" v-model="tagInputValue" type="text" @keypress.enter="handleAddTag()"
         class="tag-input w-full rounded-[0.5rem] border-[2px] border-border-color py-[0.75rem] pl-[1rem] text-[1rem] text-title-text-color outline-normal-btn-active"
-        @click="(event) => event.target.focus()"
-        :class="{ 'border-error-color outline-error-color': $v1.tags.$error }"
-      />
+        @click="(event) => event.target.focus()" :class="{ 'border-error-color outline-error-color': $v1.tags.$error }" />
 
-      <div
-        class="tag-box absolute z-[10] max-h-[15rem] w-full overflow-y-auto bg-green-50 shadow-md"
-      >
+      <div class="tag-box absolute z-[10] max-h-[15rem] w-full overflow-y-auto bg-green-50 shadow-md">
         <ul>
           <li v-for="tag in existedTags">
             <button
               class="block w-full px-[1rem] py-[0.5rem] text-left text-[1rem] text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active disabled:bg-normal-btn-hover"
-              @click="handleAddTag(tag.name)"
-              v-if="
-                tag.name.includes(tagInputValue) && !tags.includes(tag.name)
-              "
-            >
+              @click="handleAddTag(tag.name)" v-if="tag.name.includes(tagInputValue) && !tags.includes(tag.name)
+                ">
               {{ tag.name }}
             </button>
           </li>
@@ -199,16 +178,12 @@ async function handleSetPadding() {
       <div class="relative w-full">
         <div class="absolute bottom-[0.5rem] flex pl-[0.5rem]" ref="tagsRef">
           <template v-for="tag in tags">
-            <span
-              class="text-ntext mx-[0.25rem] flex items-center rounded-[1rem] bg-green-100 pl-[1rem]"
-            >
+            <span class="text-ntext mx-[0.25rem] flex items-center rounded-[1rem] bg-green-100 pl-[1rem]">
               <span>
                 {{ tag }}
               </span>
-              <button
-                @click="handleRemoveTag(tag)"
-                class="text-ntext ml-[0.25rem] flex rounded-[1rem] p-[0.5rem] hover:bg-red-500"
-              >
+              <button @click="handleRemoveTag(tag)"
+                class="text-ntext ml-[0.25rem] flex rounded-[1rem] p-[0.5rem] hover:bg-red-500">
                 <i class="pi pi-icons pi-times-circle my-auto"></i>
               </button>
             </span>
@@ -217,24 +192,20 @@ async function handleSetPadding() {
       </div>
     </div>
     <div class="w-auto">
-      <span
-        class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color"
-        >Nội dung</span
-      >
+      <span class="mb-[0.25rem] block text-[1.2rem] font-semibold leading-none text-title-text-color">Nội dung</span>
       <div id="editor"></div>
     </div>
 
     <button
       class="mt-[0.5rem] w-full rounded-[0.5rem] bg-normal-btn-bg py-[0.5rem] text-[1.2rem] font-semibold text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active"
-      @click="handleUpload"
-    >
+      @click="handleUpload">
       Tải lên
     </button>
   </div>
 </template>
 
 <style>
-.tag-input:focus + .tag-box {
+.tag-input:focus+.tag-box {
   display: block !important;
 }
 

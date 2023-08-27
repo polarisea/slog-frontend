@@ -9,15 +9,19 @@ import { useTagStore } from "../stores/tag";
 import { useLSidebarStore } from "../stores/lSidebar";
 import { useArticleStore } from "../stores/article";
 
+
 const baseStore = useBaseStore();
 const tagStore = useTagStore();
 const lSidebarStore = useLSidebarStore();
 const articleStore = useArticleStore();
 
-tagStore.fetchTags();
+if (lSidebarStore.status != "user-view") {
+  lSidebarStore.initUserView();
+  tagStore.fetchTags();
+}
+
 articleStore.tag = null;
-lSidebarStore.initUserView();
-baseStore.fetchAuthor();
+baseStore.fetchQuote();
 
 onMounted(async () => {
   const options = {
@@ -58,20 +62,20 @@ onMounted(async () => {
     </div>
     <div class="relative h-[calc(100vh-4rem)] w-[20rem] px-[1rem] pr-[2rem] pt-[2rem] max-lg:hidden">
       <div class="flex w-auto flex-col items-center rounded-[1rem] bg-normal-bg py-[2rem] text-title-text-color">
-        <div class="m-auto" v-if="!baseStore.author">
-          <i class="pi pi-spin pi-spinner text-[2rem] text-title-text-color"></i>
+        <div class="m-auto">
+          <i class="pi pi-spin pi-spinner text-[2rem] text-title-text-color" v-if="!baseStore.quote"></i>
         </div>
-        <template v-if="baseStore.author">
-          <span class="mx-auto block text-[1.2rem] font-semibold"> Tác giả </span>
-          <img :src="baseStore.author.photo" class="my-[1rem] h-[5rem] w-[5rem] rounded-[2.5rem] bg-normal-btn-bg"
+        <template v-if="baseStore.quote">
+          <span class="mx-auto block text-[1.2rem] font-semibold"> Quote </span>
+          <img src="@/assets/svg/anonymous.svg" class="my-[1rem] h-[5rem] w-[5rem] rounded-[2.5rem] bg-normal-btn-bg"
             alt="" />
           <span class="block w-full pl-[1.5rem] text-[1rem]">
-            <span class="font-semibold">Tên:</span>
-            <span class="ml-[0.5rem]">{{ baseStore.author.name }}</span>
+            {{ baseStore.quote.content }}
+            <!-- <span class="font-semibold">Tên:</span>
+            <span class="ml-[0.5rem]"></span> -->
           </span>
-          <span class="block w-full pl-[1.5rem] text-[1rem]">
-            <span class="font-semibold">Email:</span>
-            <span class="ml-[0.5rem]">{{ baseStore.author.email }}</span>
+          <span class="block w-full  text-[1rem] text-center font-semibold">
+            {{ baseStore.quote.author }}
           </span>
         </template>
       </div>

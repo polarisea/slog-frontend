@@ -11,6 +11,7 @@ export const useTagStore = defineStore("tag", {
     fetchTags() {
       baseAxios.get("/api/tags").then((res) => {
         this.tags = res.data;
+
       });
     },
   },

@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import baseAxios from "../services/axios";
 
 export const useLSidebarStore = defineStore("lSidebar", {
   state: () => {
@@ -8,10 +7,12 @@ export const useLSidebarStore = defineStore("lSidebar", {
       items: [],
       isShowAllTags: false,
       tags: [],
+      status: null
     };
   },
   actions: {
     initUserView() {
+      this.status = "user-view";
       this.items = [
         { label: "Trang chủ", type: "route", icon: "pi-home", route: "/" },
         {
@@ -36,6 +37,7 @@ export const useLSidebarStore = defineStore("lSidebar", {
     },
 
     initAdminView() {
+      this.status = "admin-view";
       this.items = [
         { label: "Trang chủ", type: "route", icon: "pi-home", route: "/" },
         {
