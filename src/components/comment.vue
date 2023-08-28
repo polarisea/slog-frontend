@@ -32,9 +32,9 @@ const $v2 = useVuelidate(replyRules, { replyValue });
 
 
 
-function handleDeleteComment() {
-  console.log(comment)
-  commentStore.deleteComment(comment.id, comment.post)
+function handleDeleteComment(_id) {
+  // console.log(comment)
+  commentStore.deleteComment(_id, comment.post)
 
 }
 
@@ -43,11 +43,11 @@ function handleViewReplies() {
   showReplies.value = !showReplies.value;
 }
 
-async function handleReply() {
+async function handleReply(_id) {
   const isValid = await $v2.value.$validate();
   if (!$v2.value.replyValue.$error) {
     if (userStore.info) {
-      commentStore.postComment(userStore.info.id, replyValue.value, null, `/api/comments/${comment.id}`);
+      commentStore.postComment(userStore.info.id, replyValue.value, null, `/api/comments/${_id}`);
       replyValue.value = "";
       $v2.value.$reset();
     } else {
@@ -118,13 +118,14 @@ async function handleReply() {
       </span>
     </span>
     <div class="ml-[2.5rem] mt-[0.5rem] w-full pr-[2.5rem]" v-if="showReplies">
-      <sub-comment :comment="reply" v-for="reply in comment.comments"></sub-comment>
+      <sub-comment :comment="reply" v-for="reply in   comment.comments  "></sub-comment>
       <span class="relative block" :class="{ 'mt-[0.5rem]': comment.comments.length > 0 }">
         <textarea v-model="replyValue"
           class="w-full resize-none rounded-[1rem] border-[2px] border-border-color px-[1rem] py-[0.25rem] text-[1rem] text-normal-text-color outline-normal-btn-active"
           placeholder="Phản hồi..." rows="2"
           :class="{ 'outline-red-500 border-red-500': $v2.replyValue.$error }"></textarea>
-        <button class="absolute right-[1rem] top-[50%] translate-y-[-50%] text-green-btn-text-color" @click="handleReply">
+        <button class="absolute right-[1rem] top-[50%] translate-y-[-50%] text-green-btn-text-color"
+          @click="handleReply(comment.id)">
           <i class="pi pi-send text-[1.5rem]" :class="{
             'pi-spin pi-spinner': isTyping,
             ' pi-send': !isTyping

@@ -13,9 +13,8 @@ function handleDeleteUser() {
   console.log("Delete user: ");
 }
 
-function handleDeleteReply() {
-  console.log(comment)
-  commentStore.deleteComment(comment.id, `/${route.params.id}`, comment.parent.split("/").at(-1));
+function handleDeleteReply(_id) {
+  commentStore.deleteComment(_id, `/${route.params.id}`, comment.parent.split("/").at(-1));
 }
 
 </script>
@@ -56,7 +55,7 @@ function handleDeleteReply() {
       </button> -->
       <button
         class="z-20 ml-[0.5rem] flex w-fit items-center rounded-[1rem] border-[1px] border-error-color px-[1rem] py-[0.5rem] text-[1rem] leading-none text-error-color hover:bg-red-200 active:bg-red-300"
-        @click="handleDeleteReply" v-if="userStore.isAdmin">
+        @click="handleDeleteReply(comment.id)" v-if="userStore.isAdmin">
         <i class="pi pi-trash mr-[0.25rem]"></i>
         <span>Xóa</span>
       </button>

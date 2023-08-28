@@ -40,8 +40,8 @@ function handleOpenArticle() {
 </script>
 
 <template>
-  <div class="relative w-full rounded-[1rem] p-[1rem] text-[1rem] text-normal-text-color hover:bg-normal-bg">
-    <a class="absolute left-0 top-0 z-[5] h-full w-full" @click.self="handleOpenArticle"></a>
+  <div class="relative w-full rounded-[1rem] p-[1rem] text-[1rem] text-normal-text-color hover:bg-normal-bg  cursor">
+    <a class="absolute left-0 top-0 z-[5] h-full w-full " @click.self="handleOpenArticle"></a>
     <span class="relative flex justify-between">
       <div class="flex items-start">
         <img class="h-[2rem] w-[2rem] rounded-[2rem] bg-gray-300" :src="article.user.photo" alt="" />
