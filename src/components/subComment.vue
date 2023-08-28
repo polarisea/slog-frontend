@@ -45,12 +45,12 @@ function handleDeleteReply() {
       {{ comment.content }}
     </span>
     <span class="ml-[2.5rem] flex w-full justify-end pr-[3.5rem]">
-      <button
+      <!-- <button
         class="z-20 flex w-fit items-center rounded-[1rem] px-[1rem] py-[0.5rem] text-[1rem] leading-none text-normal-text-color hover:bg-normal-btn-hover active:bg-normal-btn-active"
         @click="">
         <i class="pi pi-exclamation-triangle mr-[0.25rem]"></i>
         <span>Báo cáo</span>
-      </button>
+      </button> -->
       <button
         class="z-20 ml-[0.5rem] flex w-fit items-center rounded-[1rem] border-[1px] border-error-color px-[1rem] py-[0.5rem] text-[1rem] leading-none text-error-color hover:bg-red-200 active:bg-red-300"
         @click="handleDeleteReply" v-if="userStore.isAdmin">

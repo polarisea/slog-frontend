@@ -145,7 +145,9 @@ async function handleSetPadding() {
 </script>
 
 <template>
-  <div class="fixed left-0 top-0 z-[50] flex h-[100vh] w-[100vw] bg-overlay-color" v-if="overlayVisible">
+  <div
+    class="fixed left-0 top-0 z-[50] flex h-[100vh] w-[100vw] lg:left-[20rem] lg:w-[calc(100vw-20rem)] bg-overlay-color"
+    v-if="overlayVisible">
     <span class="m-auto block">
       <i class="pi pi-spin pi-spinner text-[4rem]"></i>
     </span>

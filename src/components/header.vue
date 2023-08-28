@@ -31,6 +31,7 @@ function handleOpenSummary() {
 function handleSignOut() {
   console.log("Handle sign out");
   userStore.logOut();
+  window.location.href = `${window.location.origin}/user/logout`
 }
 </script>
 
