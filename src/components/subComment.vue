@@ -1,4 +1,5 @@
 <script setup>
+import { useRoute } from "vue-router"
 import { useUserStore } from "../stores/user";
 import { useCommentStore } from "../stores/comment";
 
@@ -6,13 +7,15 @@ const { comment } = defineProps(["comment"]);
 const userStore = useUserStore();
 const commentStore = useCommentStore();
 
+const route = useRoute();
+
 function handleDeleteUser() {
   console.log("Delete user: ");
 }
 
 function handleDeleteReply() {
   console.log(comment)
-  commentStore.deleteComment(comment.id, comment.parent.split("/").at(-1));
+  commentStore.deleteComment(comment.id, `/${route.params.id}`, comment.parent.split("/").at(-1));
 }
 
 </script>

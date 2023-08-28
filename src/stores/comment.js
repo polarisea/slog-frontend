@@ -61,29 +61,32 @@ export const useCommentStore = defineStore("comment", {
         });
     },
 
-    deleteComment(id, parent) {
+    deleteComment(id, post, parent) {
       baseAxios.delete(`/api/comments/${id}`).then(res => {
-        console.log(res.data)
-        if (parent) {
-          parentLoop: for (let i = 0; i <= this.comments.length; i++) {
-            if (this.comments[i].id == parent) {
-              for (let j = 0; j <= this.comments[i].comments.length; j++) {
-                if (this.comments[i].comments[j].id == id) {
-                  this.comments[i].comments.splice(j, 1);
-                  break parentLoop;
-                }
 
-              }
-            }
-          }
-        } else {
-          for (let i = 0; i <= this.comments.length; i++) {
-            if (this.comments[i].id == id) {
-              this.comments.splice(i, 1);
-              break;
-            }
-          }
-        }
+        console.log(res.data)
+        // if (parent) {
+        //   parentLoop: for (let i = 0; i <= this.comments.length; i++) {
+        //     if (this.comments[i].id == parent) {
+        //       for (let j = 0; j <= this.comments[i].comments.length; j++) {
+        //         if (this.comments[i].comments[j].id == id) {
+        //           this.comments[i].comments.splice(j, 1);
+        //           break parentLoop;
+        //         }
+        //       }
+        //     }
+        //   }
+        // } else {
+        //   for (let i = 0; i <= this.comments.length; i++) {
+        //     if (this.comments[i].id == id) {
+        //       this.comments.splice(i, 1);
+        //       break;
+        //     } 
+
+        //   }
+        // }
+        // console.log(post.split("/"))
+        this.firstFetch(post.split("/").at(-1))
       }).catch(err => {
         console.log(err)
         toast.error("Xóa comment thất bại.")

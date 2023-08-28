@@ -31,13 +31,11 @@ const replyRules = computed(() => {
 const $v2 = useVuelidate(replyRules, { replyValue });
 
 
-function handleDeleteUser() {
-  console.log("Delete user: ");
-}
 
 function handleDeleteComment() {
   console.log(comment)
-  commentStore.deleteComment(comment.id)
+  commentStore.deleteComment(comment.id, comment.post)
+
 }
 
 function handleViewReplies() {
@@ -113,7 +111,7 @@ async function handleReply() {
         </button>
         <button
           class="z-20 ml-[0.5rem] flex w-fit items-center rounded-[1rem] border-[1px] border-error-color px-[1rem] py-[0.5rem] text-[1rem] leading-none text-error-color hover:bg-red-200 active:bg-red-300"
-          @click="handleDeleteComment" v-if="userStore.isAdmin">
+          @click="handleDeleteComment(comment.id)" v-if="userStore.isAdmin">
           <i class="pi pi-trash mr-[0.25rem]"></i>
           <span>Xóa</span>
         </button>
