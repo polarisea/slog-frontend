@@ -23,24 +23,25 @@ export const useUserStore = defineStore("user", {
           this.isLogin = true;
         })
         .catch(() => {
-          this.info = {
-            "id": 2,
-            "googleId": "108262624784925882711",
-            "roles": [
-              "ROLE_USER"
-            ],
-            "name": "Đình Dũng Vũ",
-            "photo": "https://lh3.googleusercontent.com/a/AAcHTtfLN-wtAsQX4i1tnHGvAu7SpFq0TtgqaNvhwpML8-E=s96-c",
-            "posts": [],
-            "userIdentifier": "108262624784925882711"
-          }
-          this.isLogin = true;
-          if (this.info.roles.includeof("ROLE_ADMIN")) {
-            this.isAdmin = true
-          } else {
-            this.isAdmin = false
-          }
-          // this.info = null;
+          // this.info = {
+          //   "id": 2,
+          //   "googleId": "108262624784925882711",
+          //   "roles": [
+          //     "ROLE_USER"
+          //   ],
+          //   "name": "Đình Dũng Vũ",
+          //   "photo": "https://lh3.googleusercontent.com/a/AAcHTtfLN-wtAsQX4i1tnHGvAu7SpFq0TtgqaNvhwpML8-E=s96-c",
+          //   "posts": [],
+          //   "userIdentifier": "108262624784925882711"
+          // }
+          // this.isLogin = true;
+          // if (this.info.roles.includeof("ROLE_ADMIN")) {
+          //   this.isAdmin = true
+          // } else {
+          //   this.isAdmin = false
+          // }
+          this.isAdmin = false;
+          this.info = null;
         });
     },
 
